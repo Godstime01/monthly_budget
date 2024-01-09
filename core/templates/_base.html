@@ -1,0 +1,113 @@
+<!-- templates/_base.html -->
+
+{% load compress %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django + Tailwind CSS + Flowbite</title>
+
+    {% compress css %}
+    <link rel="stylesheet" href="{% static 'src/output.css' %}">
+    {% block customStyle %}
+
+    {% endblock %}
+
+    {% endcompress %}
+
+</head>
+
+<body class="bg-background" id="body" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    <div class="">
+        {% block content %}
+        {% endblock content %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+    <script>
+
+        const getChartOptions = () => {
+            return {
+                series: [{{budget.get_available_amount}}, {{budget.get_total_expenses}}],
+                colors: ['hsla(146, 59%, 57%, 1)', "hsla(0, 0%, 82%, 1)",],
+                chart: {
+                    height: 200,
+                    width: '100%',
+                    type: "donut",
+                },
+                stroke: {
+                    colors: ["transparent"],
+                    lineCap: "",
+                },
+                dataLabels: {
+                    enabled: false,
+                },
+    
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            labels: {
+                                show: true,
+                                name: {
+                                    show: true,
+                                    fontFamily: "Inter, sans-serif",
+                                    offsetY: 20,
+                                },
+                                total: {
+                                    showAlways: true,
+                                    show: true,
+                                    fontFamily: "Inter, sans-serif",
+                                    label: 'spent',
+                                    formatter: function (w) {
+                                        const [income, spent] = w.globals.seriesTotals
+                                        // console.log(income, spent)
+                                        const perc = (spent/income) * 100
+                                        return `${perc.toFixed(2)}%`
+                                    },
+                                },
+                                value: {
+                                    show: true,
+                                    fontFamily: "Inter, sans-serif",
+                                    offsetY: -20,
+                                    fontSize: '10px',
+                                    formatter: function (value) {
+                                        return value + "k"
+                                    },
+                                },
+                            },
+                            size: "80%",
+                        },
+                    },
+                }
+            }
+        }
+    
+        const chartFunction = (element) => {
+            console.log(element)
+            if (element && typeof ApexCharts !== 'undefined') {
+                console.log('reach here')
+                const chart = new ApexCharts(element, getChartOptions());
+                chart.render();
+            }
+        }
+    
+        // ApexCharts options and config
+        window.addEventListener("load", function () {
+    
+    
+            const doughChart = document.getElementById('donut-chart')
+            chartFunction(doughChart)
+    
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,173 @@
+<!-- templates/dashboard.html -->
+
+{% extends "_base.html" %}
+{% load static %}
+
+{% block customStyle %}
+<style>
+    /* label */
+    .apexcharts-text.apexcharts-datalabel-label {
+        font-size: 15px !important;
+        color: red !important;
+    }
+
+    /* total number */
+    .apexcharts-text.apexcharts-datalabel-value {
+        font-size: 25px !important;
+        color: red !important;
+        fill: red !important;
+    }
+
+    .apexcharts-legend.apexcharts-align-center.apx-legend-position-right {
+        display: none !important;
+    }
+
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="min-h-screen">
+    <!-- navbar -->
+    <nav class="container mx-auto px-5">
+        <div class="container mx-auto border-b border-white flex justify-between py-7 ">
+            <a href="" class="text-white">
+                <span class="text-button text-sm">Expenses</span>
+                <span class="block text-2xl font-bold">Monthly <span class="text-accent">Budget</span></span>
+            </a>
+
+            <button  data-modal-target="authentication-modal" data-modal-toggle="authentication-modal" class="rounded-sm p-3 text-black bg-button hover:bg-button/50 hidden md:block">New Expense</button>
+        </div>
+    </nav>
+
+    <!-- for mobile screens -->
+
+    <div class="fixed end-6 bottom-6 md:hidden">
+        <button type="button" data-modal-target="authentication-modal" data-modal-toggle="authentication-modal" aria-controls="speed-dial-menu-default"
+            aria-expanded="false"
+            class="flex items-center justify-center text-black bg-button rounded-full w-14 h-14 focus:ring-4 focus:ring-button ">
+            <svg class="w-5 h-5 transition-transform fill-black group-hover:rotate-45" aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 1v16M1 9h16" />
+            </svg>
+            <span class="sr-only">Open actions menu</span>
+        </button>
+    </div>
+
+    <section
+        class=" container mx-auto px-5 py-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[2fr_1fr_1fr] gap-5 min-h-full">
+
+        <div>
+            <div class="flex justify-between items-center gap-5">
+                <span class="text-button text-sm">Description</span>
+
+                <div class="border border-button p-2 text-sm flex items-center justify-between gap-5">
+                    <span class="text-button">Filter Expenses</span>
+
+
+
+                    <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown"
+                        class="text-white bg-transparent font-medium text-button text-sm text-center inline-flex items-center"
+                        type="button">All <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m1 1 4 4 4-4" />
+                        </svg>
+                    </button>
+
+                    <!-- Dropdown menu -->
+                    <div id="dropdown"
+                        class="z-10 hidden bg-background border border-button divide-y divide-gray-100 rounded-lg shadow w-44 mt-2">
+                        <ul class="py-2 text-sm text-white" aria-labelledby="dropdownDefaultButton">
+                            {% for category in budget.expense_set.all %}
+                            <li>
+                                <button hx-get="{% url 'filter' category.category %}" hx-target="#expense-content" class="block px-4 py-2 hover:bg-button duration-300 capitalize w-full">{{category.category}}</button>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+
+                </div>
+            </div>
+
+            {% include './partials/expenses.html' %}
+        </div>
+
+        <div class="bg-gray-100 rounded-sm p-4 flex flex-col gap-5">
+            <!-- heading -->
+            <div class="border-b border-gray-400 text-center">
+                <h2 class="text-xl">Calculation</h2>
+            </div>
+
+            <div class="bg-white p-2 text-center">
+                <span class="block uppercase">Income</span>
+                <span class="block">${{budget.income}}</span>
+            </div>
+
+            <!-- graph -->
+
+            <div class="max-w-sm w-full bg-white shadow p-4">
+                <!-- Donut Chart -->
+                <div class="py-2" id="donut-chart"></div>
+            </div>
+
+
+            <div class="grid grid-cols-2 items-center gap-4 rounded-md">
+                <div class="bg-black p-3 rounded-sm text-center text-white">
+                    <span class="block uppercase">Available</span>
+                    <span class="block text-accent">${{budget.get_available_amount}}</span>
+                </div>
+
+                <div class="bg-black p-3 rounded-sm text-center text-white">
+                    <span class="block uppercase">Spent</span>
+                    <span class="block text-button">${{budget.get_total_expenses}}</span>
+                </div>
+            </div>
+
+            <button hx-post="{% url 'reset-account' %}" hx-swap="outerHTML" hx-target="#body" hx-confirm="Are you sure you wish to reset your account?" class="rounded-sm p-3 text-black bg-button hover:bg-button/50 hidden md:block">Reset All Expense</button>
+
+        </div>
+
+        <div class="bg-gray-100 rounded-sm p-4 flex flex-col gap-5">
+            <!-- heading -->
+            <div class="border-b border-gray-400 text-center">
+                <h2 class="text-xl">Optionals</h2>
+            </div>
+
+            <div class="bg-white p-2 text-center">
+                <h3 class="block uppercase my-3 pb-5 border-b-2 border-spacing-4 border-dotted border-black">CHOOSE ANY FIX EXPENSES</h3>
+
+                <!-- subscriptions -->
+                <div>
+                    <div class="grid grid-cols-[1fr_2fr_1fr] p-3">
+                        <div>
+                            image
+                        </div>
+                        <div>
+                            name
+                        </div>
+                        <div>
+                            <button class="rounded-full px-2 bg-accent text-black font-bold">select</button>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+
+            <div class="p-3 border-l-4 border-accent bg-white shadow-lg ">
+                {{budget.goal}}
+            </div>
+
+        </div>
+
+    </section>
+</div>
+
+
+{% include './partials/modal.html' %}
+
+
+{% endblock %}

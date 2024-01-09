@@ -1,0 +1,20 @@
+{% for expense in expenses %}
+<div
+    class="grid grid-cols-1 md:grid-cols-[1fr_3fr_1fr] items-center border-y border-dotted w-full p-4 group/item hover:bg-box-bg relative rounded-sm">
+    <img src="" alt="icon">
+    <div class="capitalize text-left grow">
+        <div class="font-medium"> {{expense.name}}</div>
+        <div class="font-thin">Date: <span class="font-bold">{{expense.date}}</span></div>
+    </div>
+    <div class="font-bold text-2xl">${{expense.amount}}</div>
+
+    <!-- hover -->
+    <div
+        class="group/edit bg-black/70 invisible group-hover/item:visible group-hover/item:duration-100 w-full h-full flex items-center justify-center gap-3 absolute">
+        <button class="uppercase px-6 py-2 rounded-sm bg-accent text-white">Edit</button>
+        <button class="uppercase px-6 py-2 rounded-sm bg-red-500 text-white" hx-post="{% url 'dashboard' %}" hx-target="#body"
+            hx-confirm="You're about to delete this expense? Do you want to continue?">Delete</button>
+    </div>
+</div>
+
+{% endfor %}
