@@ -1,8 +1,13 @@
+{%  load static %}
+{% load category %}
+
 <div id="expense-content" class="text-white mt-10 flex flex-col items-center justify-center">
     {% if budget %}
         {% for expense in budget.get_user_expenses %}
             <div class="grid grid-cols-1 md:grid-cols-[1fr_3fr_1fr] items-center border-y border-dotted w-full p-4 group/item hover:bg-box-bg relative rounded-sm">
-                <img src="" alt="icon">
+                {% category_icon expense.category as icon %}
+                <img src="{{icon.src}}" alt="icon">
+                
                 <div class="capitalize text-left grow">
                     <div class="font-medium"> {{expense.name}}</div>
                     <div class="font-thin">Date: <span class="font-bold">{{expense.date}}</span></div>
