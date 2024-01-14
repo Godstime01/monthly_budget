@@ -36,7 +36,7 @@
 
         const getChartOptions = () => {
             return {
-                series: [{{budget.get_available_amount}}, {{budget.get_total_expenses}}],
+                series: [{{budget.income}}, {{budget.get_total_expenses}}],
                 colors: ['hsla(146, 59%, 57%, 1)', "hsla(0, 0%, 82%, 1)",],
                 chart: {
                     height: 200,
@@ -68,7 +68,7 @@
                                     label: 'spent',
                                     formatter: function (w) {
                                         const [income, spent] = w.globals.seriesTotals
-                                        // console.log(income, spent)
+                                        console.log(income, spent)
                                         const perc = (spent/income) * 100
                                         return `${perc.toFixed(2)}%`
                                     },
@@ -91,7 +91,7 @@
         }
     
         const chartFunction = (element) => {
-            console.log(element)
+            console.log({{budget.get_available_amount}})
             if (element && typeof ApexCharts !== 'undefined') {
                 console.log('reach here')
                 const chart = new ApexCharts(element, getChartOptions());

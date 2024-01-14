@@ -11,7 +11,7 @@
 
                 <!-- hover -->
                 <div class="group/edit bg-black/70 invisible group-hover/item:visible group-hover/item:duration-100 w-full h-full flex items-center justify-center gap-3 absolute">
-                    <button class="uppercase px-6 py-2 rounded-sm bg-accent text-white" data-modal-target="edit-modal" data-modal-toggle="edit-modal" hx-get="{% url 'edit_expense' expense.pk %}" hx-target="#edit-modal">Edit</button>
+                    <button class="uppercase px-6 py-2 rounded-sm bg-accent text-white" hx-get="{% url 'edit_expense' expense.pk %}" hx-target="#expense-content">Edit</button>
                     <button class="uppercase px-6 py-2 rounded-sm bg-red-500 text-white" hx-post="{% url 'delete_expense' expense.pk %}" hx-confirm="You're about to delete this expense? Do you want to continue?">Delete</button>
                 </div>
             </div>

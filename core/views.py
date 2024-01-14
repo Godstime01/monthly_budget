@@ -17,15 +17,11 @@ class HomePageView(CreateView):
 
     def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
         has_budget = request.session.get('has_budget', False)
-        print("GEt", has_budget)
+        # print("GEt", has_budget)
 
         if has_budget:
             return redirect('dashboard')
         return super().get(request, *args, **kwargs)
-    
-    def form_invalid(self, form: BaseModelForm) -> HttpResponse:
-        print('form invalud')
-        return super().form_invalid(form)
     
     def post(self, request, *args, **kwargs):
         print('called post')
@@ -36,7 +32,7 @@ class HomePageView(CreateView):
             session_key = request.session.session_key
 
         request.session['has_budget'] = True
-        print(request.session.get('has_budget'))
+        # print(request.session.get('has_budget'))
 
         form = self.get_form()
         form.instance.session_id = session_key
@@ -49,7 +45,7 @@ class HomePageView(CreateView):
 
     def form_valid(self, form: Any) -> HttpResponse:
 
-        print('form valid')
+        # print('form valid')
         return super().form_valid(form)
 
 
@@ -74,7 +70,7 @@ class DashboardView(FormView):
         session_key = self.request.session.session_key
 
         qs = Budget.objects.filter(session_id=session_key)[0]
-        print(qs)
+        # print(qs)
         context = super().get_context_data()
         context['budget'] = qs
         return context
@@ -82,7 +78,7 @@ class DashboardView(FormView):
     def form_valid(self, form: Any):
         budget = Budget.objects.filter(session_id = self.request.session.session_key)[0]
 
-        print(f'Form vaild{budget}')
+        # print(f'Form vaild{budget}')
         form.instance.budget = budget
         form.save()
 
@@ -92,17 +88,22 @@ class DashboardView(FormView):
 def update_expense(request, pk):
 
     expense = Expense.objects.filter(pk = pk)[0]
+    # print(expense.budget.pk)
+
     form = ExpenseCreationForm(instance = expense)
 
     if request.method == 'POST':
-        form = ExpenseCreationForm(request.POST)
+        print('POST CALLED')
+        form = ExpenseCreationForm(request.POST, instance = expense)
+        print(form)
 
         if form.is_valid():
             form.save()
+            return redirect('dashboard')
 
-    print(expense)
+    # print(expense)
 
-    return render(request, 'partials/edit_modal.html', {'form': form})
+    return render(request, 'partials/edit_modal.html', {'form': form, 'expense': expense})
 
 class ExpenseDelete(DeleteView):
     model = Expense
@@ -116,7 +117,7 @@ def filter_expenses(request, category=None):
     if category is not None:
         print("reach")
         qs = category
-        print(qs)
+        # print(qs)
         budget = Budget.objects.filter(session_id = request.session.session_key)[0]
 
         expenses = budget.expense_set.filter(category=qs)
