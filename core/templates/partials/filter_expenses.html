@@ -4,7 +4,7 @@
     <img src="" alt="icon">
     <div class="capitalize text-left grow">
         <div class="font-medium"> {{expense.name}}</div>
-        <div class="font-thin">Date: <span class="font-bold">{{expense.date}}</span></div>
+        <div class="font-thin">Date: <span class="font-bold">{{expense.date|date %y-%m-%d}}</span></div>
     </div>
     <div class="font-bold text-2xl">${{expense.amount}}</div>
 

@@ -101,12 +101,28 @@
     
         // ApexCharts options and config
         window.addEventListener("load", function () {
-    
-    
             const doughChart = document.getElementById('donut-chart')
             chartFunction(doughChart)
     
         });
+
+        // add event listener to the select button 
+        const selectBtns = document.querySelectorAll('.optional-btn');
+        const nameField = document.querySelector('#id_name');
+        const categoryField = document.querySelector('#id_category')
+
+        selectBtns.forEach(btn => {
+            // console.log(btn)
+            btn.addEventListener('click', e=>{
+                var r = e.currentTarget
+                var parent = r.parentNode.parentNode
+                console.log(parent)
+                categoryField.value = 'subscription'
+                nameField.value = parent.querySelector('.capitalize').innerHTML.trim().toUpperCase()
+
+            })
+        })
+
     </script>
 </body>
 

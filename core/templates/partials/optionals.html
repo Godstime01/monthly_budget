@@ -1,0 +1,16 @@
+<!-- subscriptions -->
+<div class="grid gap-5">
+    {% for sub in subscriptions %}
+    <div class="grid grid-cols-[1fr_2fr_1fr] p-3">
+        <div>
+            <img src={{sub.url}} alt="">
+        </div>
+        <div class="capitalize">
+            {{sub.name}}
+        </div>
+        <div>
+            <button data-modal-target="authentication-modal" data-modal-toggle="authentication-modal" class="rounded-full px-2 bg-accent text-black font-bold optional-btn">select</button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
